@@ -16,7 +16,8 @@ io.on('connection', (socket) => {
         console.log("user joined" + room_id + "with email" + email_id);
         socket.join(room_id)
         emailToSocketMapping.set(email_id, socket.id)
-        socket.broadcast.to(room_id).emit("user-joined", { email_id })
+        socket.emit("joined_room", { room_id })
+        socket.broadcast.to(room_id).emit("user_joined", { email_id })
     })
 })
 

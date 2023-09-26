@@ -1,19 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSocket } from '../context/socketContext'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
     const { socket } = useSocket()
+    const navigate = useNavigate()
+    const [email, setEmail] = useState('')
+    const [code, setCode] = useState('')
 
 
-    const handleClick = () => {
-        socket.emit("join_room", { room_id: "1", email_id: 'example@gmail.com' })
+    const handleRoomJoined = ({ room_id }) => {
+        navigate(`/room/${room_id}`)
+
+    }
+
+    useEffect(() => {
+        socket.on("joined_room", handleRoomJoined)
+
+
+    }, [socket])
+
+
+    const handleClick = (e) => {
+        e.preventDefault();
+
+        socket.emit("join_room", { room_id: code, email_id: email })
     }
     return (
         <form style={{ display: 'flex', flexDirection: 'column', width: "300px" }}>
             <label>email</label>
-            <input type="email" name="" id="" />
+            <input type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
             <label>code</label>
-            <input type="text" name="" id="" />
+            <input type="text" name="" id="" value={code} onChange={(e) => setCode(e.target.value)} />
             <button type="button" onClick={handleClick}>enter Room</button>
         </form>
     )
