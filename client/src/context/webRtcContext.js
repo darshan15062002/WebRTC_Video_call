@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 
 export const usePeer = () => useContext(webRtcContext)
@@ -10,6 +10,8 @@ export const webRtcContext = createContext(null)
 
 
 export const WebRtcProvider = ({ children }) => {
+    const [remoteStrem, setRemoteStream] = useState()
+
     const peer = useMemo(
         () =>
             new RTCPeerConnection({
@@ -32,7 +34,7 @@ export const WebRtcProvider = ({ children }) => {
     }
     const createAns = async (offer) => {
         await peer.setRemoteDescription(offer)
-        const answer = await peer.createAns()
+        const answer = await peer.createAnswer()
         await peer.setLocalDescription(answer)
         return answer
     }
@@ -41,8 +43,27 @@ export const WebRtcProvider = ({ children }) => {
         await peer.setRemoteDescription(ans)
     }
 
+    const sendStream = async (stream) => {
+        const tracks = stream.getTracks();
+        for (const tract of tracks) {
+            peer.addTrack(tract, stream)
+        }
+    }
+
+
+    const handleTrackEvent = useCallback((ev) => {
+        const streams = ev.streams
+        setRemoteStream(streams[0])
+    }, [])
+    useEffect(() => {
+        peer.addEventListener("track", handleTrackEvent)
+        return () => {
+            peer.removeEventListener('track', handleTrackEvent)
+        }
+    }, [peer])
+
     return (
-        < webRtcContext.Provider value={{ peer, createOffer, createAns, setRemoteAns }}>
+        < webRtcContext.Provider value={{ peer, createOffer, createAns, setRemoteAns, sendStream, remoteStrem }}>
             {children}
         </webRtcContext.Provider>
     )
