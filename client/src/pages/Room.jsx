@@ -6,8 +6,8 @@ import ReactPlayer from 'react-player'
 function Room() {
     const { socket } = useSocket()
 
-    const [myStream, setMyStream] = useState()
-    const { peer, createOffer, createAns, setRemoteAns, sendStream, remoteStrem } = usePeer()
+    const [myStream, setMyStream] = useState(null)
+    const { createOffer, createAns, setRemoteAns, sendStream, remoteStrem } = usePeer()
 
     const handleNewUserJoin = useCallback(async ({ email_id }) => {
 
@@ -47,10 +47,13 @@ function Room() {
 
 
     const getUserMediaStrem = useCallback(async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-        sendStream(stream)
-        setMyStream(stream)
-    }, [sendStream])
+        await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(
+            stream => setMyStream(stream),
+            err => console.log(err)
+        );
+
+
+    }, [])
 
 
     useEffect(() => {
@@ -63,6 +66,7 @@ function Room() {
         <div>
             <ReactPlayer url={myStream} playing={true} />
             {remoteStrem && <ReactPlayer url={remoteStrem} playing={true} />}
+            <button onClick={(e) => sendStream(myStream)}>click</button>
         </div>
     )
 }
