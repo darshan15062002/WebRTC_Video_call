@@ -66,7 +66,7 @@ function Room() {
         <div>
             <ReactPlayer url={myStream} playing={true} />
             {remoteStrem && <ReactPlayer url={remoteStrem} playing={true} />}
-            <button onClick={(e) => sendStream(myStream)}>click</button>
+            <button onClick={() => sendStream(myStream)}>click</button>
         </div>
     )
 }

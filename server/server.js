@@ -1,14 +1,16 @@
 const express = require('express')
 const { Server } = require('socket.io')
 const bodyParser = require("body-parser")
-const io = new Server({ cors: true })
-
+const io = new Server(process.env.PORT || 8000, {
+    cors: true,
+});
 const app = express()
 
 app.use(bodyParser.json())
 
 const emailToSocketMapping = new Map()
 const socketToEmailMapping = new Map()
+
 
 io.on('connection', (socket) => {
     console.log("new Connection");
@@ -38,7 +40,9 @@ io.on('connection', (socket) => {
     })
 })
 
-app.listen(9000, () => {
-    console.log("server is running on port 9000");
-})
-io.listen(9001)
+// app.listen(PORT, () => {
+//     console.log("server is running on port 9000");
+// })
+// io.listen(9001, () => {
+//     console.log("server is running on port 9001")
+// })

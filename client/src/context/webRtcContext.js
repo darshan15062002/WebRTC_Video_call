@@ -44,7 +44,7 @@ export const WebRtcProvider = ({ children }) => {
     }
 
     const sendStream = async (stream) => {
-        const tracks = stream?.getTrack();
+        const tracks = stream.getTrack();
         for (const tract of tracks) {
             peer.addTrack(tract, stream)
         }
