@@ -33,7 +33,7 @@ export const WebRtcProvider = ({ children }) => {
         return offer
     }
     const createAns = async (offer) => {
-        await peer.setRemoteDescription(offer)
+        await peer?.setRemoteDescription(offer)
         const answer = await peer.createAnswer()
         await peer.setLocalDescription(answer)
         return answer
@@ -44,27 +44,25 @@ export const WebRtcProvider = ({ children }) => {
     }
 
     const sendStream = async (stream) => {
-        const tracks = stream.getTrack();
-        for (const tract of tracks) {
-            peer.addTrack(tract, stream)
+        console.log(stream.getTracks(), "my Stream");
+        const tracks = stream?.getTracks();  // Use getTracks() instead of getTrack()
+        for (const track of tracks) {
+            peer.addTrack(track, stream);
         }
     }
 
-
     const handleTrackEvent = useCallback((ev) => {
+        console.log("remote track event", ev);
         const streams = ev.streams
         setRemoteStream(streams[0])
     }, [])
 
-    const handleNegotiation = useCallback(() => {
-        console.log("got negotiation");
-    }, [])
 
     useEffect(() => {
         peer.addEventListener("track", handleTrackEvent)
-        peer.addEventListener("negotiationneeded", handleNegotiation)
         return () => {
             peer.removeEventListener('track', handleTrackEvent)
+
         }
     }, [peer, handleTrackEvent])
 

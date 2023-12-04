@@ -7,7 +7,8 @@ function Room() {
     const { socket } = useSocket()
 
     const [myStream, setMyStream] = useState(null)
-    const { createOffer, createAns, setRemoteAns, sendStream, remoteStrem } = usePeer()
+    const [remoteEmailId, setRemoteEmailId] = useState()
+    const { peer, createOffer, createAns, setRemoteAns, sendStream, remoteStrem } = usePeer()
 
     const handleNewUserJoin = useCallback(async ({ email_id }) => {
 
@@ -15,15 +16,15 @@ function Room() {
         const offer = await createOffer()
         console.log("offer is creted", offer);
         socket.emit("call_user", { email_id, offer })
+        setRemoteEmailId(email_id)
     }, [createOffer, socket])
 
     const handleIncommingCall = useCallback(async (data) => {
         const { fromEmail, offer } = data
-        console.log({ fromEmail, offer });
-        console.log("incomming call" + fromEmail);
         const ans = await createAns(offer)
         console.log("ans is creted", ans);
         socket.emit("call_accepted", { email_id: fromEmail, ans })
+        setRemoteEmailId(fromEmail)
     }, [createAns, socket])
 
     const handleCallAccepted = useCallback(async ({ ans }) => {
@@ -50,23 +51,40 @@ function Room() {
         await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(
             stream => setMyStream(stream),
             err => console.log(err)
+
         );
 
 
     }, [])
 
+    const handleNegotiation = useCallback(() => {
+        const localoffer = peer.localDescription
+        socket.emit("call_user", { email_id: remoteEmailId, offer: localoffer })
+    }, [peer.localDescription, remoteEmailId, socket])
+
 
     useEffect(() => {
         getUserMediaStrem()
-
     }, [getUserMediaStrem])
 
+    useEffect(() => {
+        peer.addEventListener("negotiationneeded", handleNegotiation)
+
+        return () => {
+
+            peer.removeEventListener("negotiationneeded", handleNegotiation)
+        }
+    }, [peer, handleNegotiation])
 
     return (
-        <div>
+        <div >
+            <h1>You are connected to {remoteEmailId}</h1>
+            {console.log(myStream, "mystrem")}
             <ReactPlayer url={myStream} playing={true} />
+            {console.log(remoteStrem, "remoteStrem")}
             {remoteStrem && <ReactPlayer url={remoteStrem} playing={true} />}
             <button onClick={() => sendStream(myStream)}>click</button>
+
         </div>
     )
 }

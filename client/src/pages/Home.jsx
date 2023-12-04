@@ -10,13 +10,12 @@ function Home() {
 
 
     const handleRoomJoined = useCallback(({ room_id }) => {
+        console.log("Joined room", room_id);
         navigate(`/room/${room_id}`)
-
     }, [navigate])
 
     useEffect(() => {
         socket.on("joined_room", handleRoomJoined)
-
         return () => socket.off("joined_room", handleRoomJoined)
 
     }, [handleRoomJoined, socket])
@@ -24,7 +23,6 @@ function Home() {
 
     const handleClick = (e) => {
         e.preventDefault();
-
         socket.emit("join_room", { room_id: code, email_id: email })
     }
     return (
