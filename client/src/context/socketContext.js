@@ -16,6 +16,7 @@ export const useSocket = () => {
 
 const SocketProvider = ({ children }) => {
     const socket = useMemo(() => io("https://ice-server-socket.onrender.com"), [])
+    // const socket = useMemo(() => io("http://localhost:8000"), [])
     return (
         <socketContext.Provider value={{ socket }}>
             {children}

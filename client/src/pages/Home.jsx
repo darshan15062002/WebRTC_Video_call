@@ -26,7 +26,7 @@ function Home() {
         socket.emit("join_room", { room_id: code, email_id: email })
     }
     return (
-        <form style={{ display: 'flex', flexDirection: 'column', width: "300px" }}>
+        <form style={{ color: 'white', display: 'flex', height: '100vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center ', backgroundColor: 'black' }}>
             <label>email</label>
             <input type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
             <label>code</label>

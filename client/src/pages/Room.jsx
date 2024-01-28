@@ -8,13 +8,13 @@ function Room() {
 
     const [myStream, setMyStream] = useState(null)
     const [remoteEmailId, setRemoteEmailId] = useState()
-    const { peer, createOffer, createAns, setRemoteAns, sendStream, remoteStrem } = usePeer()
+    const { peer, createOffer, createAns, setRemoteAns, sendStream, remoteStream } = usePeer()
 
     const handleNewUserJoin = useCallback(async ({ email_id }) => {
 
-        console.log("newUser join room " + email_id);
+
         const offer = await createOffer()
-        console.log("offer is creted", offer);
+
         socket.emit("call_user", { email_id, offer })
         setRemoteEmailId(email_id)
     }, [createOffer, socket])
@@ -22,13 +22,13 @@ function Room() {
     const handleIncommingCall = useCallback(async (data) => {
         const { fromEmail, offer } = data
         const ans = await createAns(offer)
-        console.log("ans is creted", ans);
+
         socket.emit("call_accepted", { email_id: fromEmail, ans })
         setRemoteEmailId(fromEmail)
     }, [createAns, socket])
 
     const handleCallAccepted = useCallback(async ({ ans }) => {
-        console.log("call got accepted", ans);
+
         await setRemoteAns(ans)
     }, [setRemoteAns])
 
@@ -58,9 +58,15 @@ function Room() {
     }, [])
 
     const handleNegotiation = useCallback(() => {
-        const localoffer = peer.localDescription
-        socket.emit("call_user", { email_id: remoteEmailId, offer: localoffer })
-    }, [peer.localDescription, remoteEmailId, socket])
+        try {
+            const localOffer = peer.localDescription;
+            console.log("negotiation needed", localOffer);
+            socket.emit("call_user", { email_id: remoteEmailId, offer: localOffer });
+        } catch (error) {
+            console.error("Error during negotiation:", error);
+            // Handle error appropriately
+        }
+    }, [peer.localDescription, remoteEmailId, socket]);
 
 
     useEffect(() => {
@@ -77,14 +83,15 @@ function Room() {
     }, [peer, handleNegotiation])
 
     return (
-        <div >
+        <div className='container' >
             <h1>You are connected to {remoteEmailId}</h1>
-            {console.log(myStream, "mystrem")}
-            <ReactPlayer url={myStream} playing={true} />
-            {console.log(remoteStrem, "remoteStrem")}
-            {remoteStrem && <ReactPlayer url={remoteStrem} playing={true} />}
-            <button onClick={() => sendStream(myStream)}>click</button>
+            <div className="new">
 
+                <ReactPlayer className="myStream" url={myStream} playing={true} volume={0} />
+
+                {remoteStream && <ReactPlayer className='remoteStream' url={remoteStream} playing={true} />}
+                {!remoteStream && <button onClick={() => sendStream(myStream)}>click</button>}
+            </div>
         </div>
     )
 }

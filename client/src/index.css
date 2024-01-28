@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+input{
+    padding: 3px;
+}
+
+form{
+    padding: 20px;
+    background: rgb(43, 43, 43);
+    text-align: left;
+}
+form label{
+    text-align: left;
+}
+button{
+    padding: 5px ;
+    margin-top: 10px;
+}
+
+.container {
+    text-align: center;
+    background: #000;
+    color: white;
+    height: 100vh;
+    padding: 20px; /* Add padding for better spacing */
+  }
+  
+  .new {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Add gap between items for better spacing */
+  }
+  
+  .myStream,
+  .remoteStream {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  /* Media query for screens with a width of 600 pixels or more (desktop) */
+  @media only screen and (min-width: 600px) {
+    .new {
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+    }
+  
+    .myStream,
+    .remoteStream {
+      max-width: 600px; /* Adjust the max-width for better layout on larger screens */
+    }
+  }
