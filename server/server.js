@@ -13,10 +13,12 @@ const socketToEmailMapping = new Map()
 
 
 io.on('connection', (socket) => {
-    console.log("new Connection");
+
     socket.on("join_room", (data) => {
+
         const { room_id, email_id } = data;
-        console.log("user joined" + room_id + "with email" + email_id);
+        console.log("userjoin", email_id);
+
         socket.join(room_id)
         emailToSocketMapping.set(email_id, socket.id)
         socketToEmailMapping.set(socket.id, email_id)
