@@ -23,16 +23,27 @@ function Home() {
 
     const handleClick = (e) => {
         e.preventDefault();
-        socket.emit("join_room", { room_id: code, email_id: email })
+        if (code && email) {
+            socket.emit("join_room", { room_id: code, email_id: email })
+        } else {
+            alert("please enter details")
+        }
+
+
     }
     return (
-        <form style={{ color: 'white', display: 'flex', height: '100vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center ', backgroundColor: 'black' }}>
-            <label>email</label>
-            <input type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <label>code</label>
-            <input type="text" name="" id="" value={code} onChange={(e) => setCode(e.target.value)} />
-            <button type="button" onClick={handleClick}>enter Room</button>
-        </form>
+        <div className="home_container">
+
+            <form className='form_container'>
+
+                <label>Name</label>
+                <input
+                    type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <label>Code</label>
+                <input type="text" name="" id="" value={code} onChange={(e) => setCode(e.target.value)} />
+                <button type="button" onClick={handleClick}>Join</button>
+            </form>
+        </div>
     )
 }
 

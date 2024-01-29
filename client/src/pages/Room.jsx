@@ -57,16 +57,18 @@ function Room() {
 
     }, [])
 
-    const handleNegotiation = useCallback(() => {
+    const handleNegotiation = useCallback(async () => {
         try {
-            const localOffer = peer.localDescription;
+            const localOffer = await createOffer()
             console.log("negotiation needed", localOffer);
             socket.emit("call_user", { email_id: remoteEmailId, offer: localOffer });
         } catch (error) {
             console.error("Error during negotiation:", error);
             // Handle error appropriately
         }
-    }, [peer.localDescription, remoteEmailId, socket]);
+    }, [peer.localDescription, createOffer, remoteEmailId, socket]);
+
+
 
 
     useEffect(() => {
@@ -86,13 +88,21 @@ function Room() {
         <div className='container' >
             <h1>You are connected to {remoteEmailId}</h1>
             <div className="new">
+                <div className="video_container" style={{ position: 'relative' }}>
+                    <ReactPlayer className="myStream" height={"100%"} width={"100%"} url={myStream} playing={true} volume={0} />
+                    <button style={{ border: '1px solid black', position: 'absolute', bottom: "15px", padding: "5px", right: '15px' }} onClick={() => {
+                        sendStream(myStream)
+                        alert("Done")
+                    }}>Send</button>
+                </div>
 
-                <ReactPlayer className="myStream" url={myStream} playing={true} volume={0} />
+                {console.log("here is remoteStream", remoteStream)}
 
-                {remoteStream && <ReactPlayer className='remoteStream' url={remoteStream} playing={true} />}
-                {!remoteStream && <button onClick={() => sendStream(myStream)}>click</button>}
+                {remoteStream ? <div className="video_container" style={{ position: 'relative' }}> <ReactPlayer height={"100%"} width={"100%"} className='remoteStream' url={remoteStream} playing={true} /></div> : <div
+                    style={{ height: "100%", width: '50%', background: 'gray', borderRadius: "20px" }}></div>}
+
             </div>
-        </div>
+        </div >
     )
 }
 
