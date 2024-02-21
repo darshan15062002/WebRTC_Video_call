@@ -13,17 +13,19 @@ export const WebRtcProvider = ({ children }) => {
     const [remoteStream, setRemoteStream] = useState(null)
     const peer = useMemo(
         () =>
-            new RTCPeerConnection({
-                iceServers: [
-                    {
-                        urls: [
-                            'stun:stun.l.google.com:19302',
-                            "stun:global.stun.twilio.com:3478",
-                        ]
+            new RTCPeerConnection(
+                // {
+                //     iceServers: [
+                //         {
+                //             urls: [
+                //                 'stun:stun.l.google.com:19302',
+                //                 "stun:global.stun.twilio.com:3478",
+                //             ]
 
-                    }
-                ]
-            }), []
+                //         }
+                //     ]
+                // }
+            ), []
     )
 
     const createOffer = async () => {
