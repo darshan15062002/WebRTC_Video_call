@@ -90,7 +90,7 @@ function Room() {
             <div className="new">
                 <div className="video_container" style={{ position: 'relative' }}>
                     <ReactPlayer className="myStream" height={"100%"} width={"100%"} url={myStream} playing={true} volume={0} />
-                    <button style={{ border: '1px solid black', position: 'absolute', bottom: "15px", padding: "5px", right: '15px' }} onClick={() => {
+                    <button style={{ border: '1px solid black', background: 'white', position: 'absolute', bottom: "30px", padding: "5px", right: '30px' }} onClick={() => {
                         sendStream(myStream)
                         alert("Done")
                     }}>Send</button>

@@ -55,12 +55,16 @@ font-weight: 400;
 }
 
 
-
+*{
+  background: #000;
+  margin: 0;
+  padding: 0;
+}
 .container {
  
-    background: #000;
+   
     color: white;
-    height: 100vh;
+ 
     display: flex;
  
    text-align: center;
@@ -79,8 +83,14 @@ font-weight: 400;
   }
 
 
-  .new .video_container{
+  .video_container{
     width: 50%;
+  }
+  @media only screen and (max-width: 768px) {
+    .new  .video_container{
+      width: 100%;
+   
+    }
   }
 
   .new .remoteStream{
