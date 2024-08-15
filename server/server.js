@@ -42,12 +42,12 @@ io.on('connection', (socket) => {
     })
 
     // **Add ICE Candidate Exchange Handling Here**
-    socket.on('ice_candidate', ({ email_id, candidate }) => {
-        console.log('ICE candidate received from:', socket.id, 'for:', email_id);
-        const socketId = emailToSocketMapping.get(email_id);
+    socket.on('ice_candidate', ({ email, candidate }) => {
+        console.log('ICE candidate received from:', socket.id, 'for:', email);
+        const socketId = emailToSocketMapping.get(email);
         if (socketId) {
             socket.to(socketId).emit('ice_candidate', { candidate });
-            console.log('ICE candidate sent to:', email_id);
+            console.log('ICE candidate sent to:', email);
         }
     });
 
