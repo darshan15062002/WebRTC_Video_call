@@ -40,6 +40,25 @@ io.on('connection', (socket) => {
         const socketId = emailToSocketMapping.get(email_id)
         socket.to(socketId).emit("call_accepted", { ans })
     })
+
+    // **Add ICE Candidate Exchange Handling Here**
+    socket.on('ice_candidate', ({ email_id, candidate }) => {
+        console.log('ICE candidate received from:', socket.id, 'for:', email_id);
+        const socketId = emailToSocketMapping.get(email_id);
+        if (socketId) {
+            socket.to(socketId).emit('ice_candidate', { candidate });
+            console.log('ICE candidate sent to:', email_id);
+        }
+    });
+
+    // Handle client disconnect
+    socket.on('disconnect', () => {
+        const email_id = socketToEmailMapping.get(socket.id);
+        console.log('Client disconnected:', socket.id, 'Email:', email_id);
+
+        emailToSocketMapping.delete(email_id);
+        socketToEmailMapping.delete(socket.id);
+    });
 })
 
 // app.listen(PORT, () => {
