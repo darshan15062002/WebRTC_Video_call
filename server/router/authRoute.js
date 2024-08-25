@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router()
 
+const JWT_SECRET = "dfesfsdbjasfbskdebskfeksdfndfhsiduh"
 
 router.post("/login", async (req, res) => {
     const { phone, password } = req.body;
@@ -26,7 +27,7 @@ router.post("/login", async (req, res) => {
         }
 
         // Generate JWT
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '15d' });
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '15d' });
 
         // Store JWT in cookies
         res.cookie('token', token, { httpOnly: true });

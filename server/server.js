@@ -10,7 +10,7 @@ var io = require('socket.io')(server);
 
 
 
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect("mongodb+srv://darshan:$$dar$$123@cluster0.ohxhu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
