@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../model/userModel');
+const { JWT_SECRET } = require('../router/authRoute');
 
 exports.isAuthenticated = async (req, res, next) => {
     try {
