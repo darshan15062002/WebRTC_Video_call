@@ -90,7 +90,7 @@ router.get("/user-list", isAuthenticated, async (req, res, next) => {
 
 router.get("/me", isAuthenticated, async (req, res, next) => {
     try {
-        console.log(req.user);
+
 
         if (req.user) {
             res.status(201).json({ user: req.user });
