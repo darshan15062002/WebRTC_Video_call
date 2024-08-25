@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
         }
 
         // Generate JWT
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '15d' });
 
         // Store JWT in cookies
         res.cookie('token', token, { httpOnly: true });
@@ -75,6 +75,27 @@ router.get("/user-list", isAuthenticated, async (req, res, next) => {
 
 
         res.status(201).json({ users });
+
+
+
+
+    } catch (err) {
+        console.log("ERROR in user list");
+        res.status(500).send("server Error")
+
+    }
+})
+
+router.get("/me", isAuthenticated, async (req, res, next) => {
+    try {
+        console.log(req.user);
+
+        if (req.user) {
+            res.status(201).json({ user: req.user });
+        }
+
+
+
 
 
 
