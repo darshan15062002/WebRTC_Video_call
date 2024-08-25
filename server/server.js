@@ -1,18 +1,45 @@
 const express = require('express')
-
+require('dotenv').config()
 const bodyParser = require("body-parser")
+const { default: mongoose } = require('mongoose')
 const app = express()
-
+const cors = require('cors')
+const cookieParser = require('cookie-parser');
 const server = app.listen(process.env.PORT || 8000)
 var io = require('socket.io')(server);
 
+
+
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Connected to MongoDB');
+}).catch(err => {
+    console.error('Error connecting to MongoDB:', err);
+});
+
+
 app.use(bodyParser.json())
+
+app.use(express.json())
+app.use(cookieParser());
+app.use(cors({
+    origin: ['http://localhost:3000', "https://crystal-concept-a928f.web.app"], // specify the exact origin for requests with credentials
+    credentials: true,
+}));
+
+
 
 const emailToSocketMapping = new Map()
 const socketToEmailMapping = new Map()
+const onlineUsers = new Map();
 
 
 io.on('connection', (socket) => {
+    // socket.on('set-status',(data)=>{
+
+    // })
 
     socket.on("join_room", (data) => {
 
@@ -60,6 +87,16 @@ io.on('connection', (socket) => {
         socketToEmailMapping.delete(socket.id);
     });
 })
+
+const authRoute = require("./router/authRoute.js")
+
+app.use("/api/v1/", authRoute)
+
+app.get("/", (req, res) => {
+    res.send("hello ")
+})
+
+
 
 
 
