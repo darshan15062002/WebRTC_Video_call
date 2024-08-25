@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const User = require('../model/userModel');
-const { JWT_SECRET } = require('../router/authRoute');
+const User = require('../model/userModel.js');
+const { JWT_SECRET } = require('../router/authRoute.js');
 
 exports.isAuthenticated = async (req, res, next) => {
     try {
