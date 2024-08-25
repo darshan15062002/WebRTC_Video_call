@@ -61,6 +61,12 @@ io.on('connection', (socket) => {
     });
 })
 
+app.get("/", (req, res) => {
+    return res.json({
+        message: 'hello'
+    })
+})
+
 // app.listen(PORT, () => {
 //     console.log("server is running on port 9000");
 // })
