@@ -10,6 +10,7 @@ const router = express.Router()
 
 router.post("/login", async (req, res) => {
     const { phone, password } = req.body;
+    console.log(phone, password);
 
     try {
         // Check if the user exists
