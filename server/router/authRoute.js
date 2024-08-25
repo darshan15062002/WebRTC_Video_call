@@ -93,6 +93,9 @@ router.get("/me", isAuthenticated, async (req, res, next) => {
         if (req.user) {
             res.status(201).json({ user: req.user });
         }
+        else {
+            res.status(401).json({ message: "Unauthorized" });
+        }
 
 
 
