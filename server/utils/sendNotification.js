@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const sendNotification = (deviceToken, data) => {
+const sendNotification = (deviceToken, data, data2) => {
     console.log("sending push notification");
 
     const message = {
@@ -8,8 +8,8 @@ const sendNotification = (deviceToken, data) => {
             body: `${data.callerName} is calling you`,
         },
         data: {
-            callId: data.callId,
-            callerName: data.callerName,
+            code: data2.code,
+            phone: data2.phone
         },
         token: deviceToken,
     };
