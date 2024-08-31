@@ -10,7 +10,7 @@ const sendNotification = (deviceToken, data, data2) => {
             phone: data2.phone
         },
         data: {
-            callId: data.callerName,
+            callId: data.callId,
             callerName: data.callerName
         },
         token: deviceToken,
