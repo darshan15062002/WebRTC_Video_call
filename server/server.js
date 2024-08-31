@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
 
 
         const user = await User.find({ code: room_id })
-        sendNotification(user.pushToken, { callId: user.phone, callerName: user.name })
+        user.pushToken && sendNotification(user.pushToken, { callId: user.phone, callerName: user.name })
 
         socket.join(room_id)
         emailToSocketMapping.set(email_id, socket.id)
