@@ -1,4 +1,6 @@
 const express = require('express')
+const admin = require('firebase-admin');
+
 require('dotenv').config()
 const bodyParser = require("body-parser")
 const { default: mongoose } = require('mongoose')

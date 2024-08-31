@@ -73,7 +73,7 @@ router.post("/register", async (req, res) => {
 router.get("/user-list", isAuthenticated, async (req, res, next) => {
     try {
 
-        const users = await User.find()
+        const users = await User.find({ _id: { $ne: req.user._id } });
 
 
         res.status(201).json({ users });
