@@ -6,10 +6,12 @@ const sendNotification = (deviceToken, data, data2) => {
         notification: {
             title: 'Incoming Call',
             body: `${data.callerName} is calling you`,
-        },
-        data: {
             code: data2.code,
             phone: data2.phone
+        },
+        data: {
+            callId: data.callerName,
+            callerName: data.callerName
         },
         token: deviceToken,
     };
