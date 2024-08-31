@@ -117,7 +117,7 @@ router.post('/save-token', isAuthenticated, async (req, res) => {
     try {
         const { token } = req.body;
 
-        // token && sendNotification(token, { callId: "hello", callerName: "hello" })
+        token && sendNotification(token, { callId: "hello", callerName: "hello" })
 
         if (!token) {
             return res.status(400).send('Device token is required');
