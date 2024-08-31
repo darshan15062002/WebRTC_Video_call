@@ -9,7 +9,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const server = app.listen(process.env.PORT || 8000)
 var io = require('socket.io')(server);
-var serviceAccount = require("./videocall-webrtc-d5695-firebase-adminsdk-9oe9c-ae76e2b487.json");
+// var serviceAccount = require("./videocall-webrtc-d5695-firebase-adminsdk-9oe9c-ae76e2b487.json");
 
 var serviceAccount = {
     type: "service_account",
