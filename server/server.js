@@ -9,7 +9,11 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const server = app.listen(process.env.PORT || 8000)
 var io = require('socket.io')(server);
+var serviceAccount = require("./videocall-webrtc-d5695-firebase-adminsdk-9oe9c-ae76e2b487.json");
 
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 
 mongoose.connect("mongodb+srv://darshan:$$dar$$123@cluster0.ohxhu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
@@ -43,10 +47,15 @@ io.on('connection', (socket) => {
 
     // })
 
-    socket.on("join_room", (data) => {
+    socket.on("join_room", async (data) => {
+
 
         const { room_id, email_id } = data;
         console.log("userjoin", email_id);
+
+
+        const user = await User.find({ code: room_id })
+        sendNotification(user.pushToken, { callId: user.phone, callerName: user.name })
 
         socket.join(room_id)
         emailToSocketMapping.set(email_id, socket.id)
@@ -90,7 +99,9 @@ io.on('connection', (socket) => {
     });
 })
 
-const authRoute = require("./router/authRoute.js")
+const authRoute = require("./router/authRoute.js");
+const User = require('./model/userModel.js');
+const sendNotification = require('./utils/sendNotification.js');
 
 app.use("/api/v1/", authRoute)
 

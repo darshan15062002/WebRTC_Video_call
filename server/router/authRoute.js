@@ -3,6 +3,7 @@ const User = require("../model/userModel.js");
 const { isAuthenticated } = require("../middleware/auth.js");
 const bcrypt = require("bcryptjs")
 const jwt = require('jsonwebtoken');
+const sendNotification = require("../utils/sendNotification.js");
 
 
 const router = express.Router()
@@ -111,6 +112,34 @@ router.get("/me", isAuthenticated, async (req, res, next) => {
 
     }
 })
+
+router.post('/save-token', isAuthenticated, async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        await sendNotification(token, { callId: "hello", callerName: "hello" })
+
+        if (!token) {
+            return res.status(400).send('Device token is required');
+        }
+
+        if (req?.user?.pushToken !== token) {
+            req.user.pushToken = token
+            await req.user.save()
+            res.status(200).send('Device token saved successfully');
+        }
+
+
+
+        res.status(200).send('already have same token');
+
+    } catch (error) {
+        console.log("errro", error);
+
+    }
+
+});
+
 
 
 

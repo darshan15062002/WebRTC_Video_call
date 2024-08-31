@@ -21,6 +21,9 @@ const userSchema = new mongoose.Schema({
         type: String, // This can be used for user identification or room codes
         unique: true,
     },
+    pushToken: {
+        type: String
+    }
 }, {
     timestamps: true
 });
