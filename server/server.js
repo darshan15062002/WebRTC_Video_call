@@ -68,9 +68,9 @@ io.on('connection', (socket) => {
         console.log("userjoin", email_id, room_id);
 
 
-        const user = await User.find({ code: room_id })
+        const user = await User.findOne({ code: room_id });
         if (!user) return
-        console.log("founded User", user?.name);
+        console.log("founded User", user);
 
         user.pushToken && sendNotification(user.pushToken, { callId: user.phone, callerName: user.name })
 
