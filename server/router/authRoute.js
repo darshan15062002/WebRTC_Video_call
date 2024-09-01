@@ -92,6 +92,7 @@ router.get("/user-list", isAuthenticated, async (req, res, next) => {
 router.get("/me", isAuthenticated, async (req, res, next) => {
     try {
 
+        console.log("load user");
 
         if (req.user) {
             res.status(201).json({ user: req.user });
@@ -117,7 +118,7 @@ router.post('/save-token', isAuthenticated, async (req, res) => {
     try {
         const { token } = req.body;
 
-        // token && sendNotification(token, { callId: "hello", callerName: "hello" })
+        token && sendNotification(token, { callId: "hello", callerName: "hello" })
 
         if (!token) {
             return res.status(400).send('Device token is required');

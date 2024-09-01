@@ -9,20 +9,10 @@ const sendNotification = (deviceToken, data) => {
         },
         android: {
             notification: {
-                clickAction: 'FLUTTER_NOTIFICATION_CLICK', // Handle notification click in app
-                channelId: 'high_importance_channel', // Make sure you have created a channel with this ID in your app
+                clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+                channelId: 'high_importance_channel',
                 priority: 'high',
-                ongoing: true, // Makes the notification sticky, not removable until user action
-                actions: [
-                    {
-                        title: "Accept",
-                        action: "ACCEPT_CALL", // Custom action
-                    },
-                    {
-                        title: "Reject",
-                        action: "REJECT_CALL", // Custom action
-                    }
-                ]
+
             },
             data: {
                 type: 'call',
