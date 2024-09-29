@@ -10,7 +10,7 @@ const sendNotification = (deviceToken, data,) => {
             callId: data.callId,
             callerName: data.callerName,
             callerAvatar: data.callerAvatar || '',  // Optional - if you want to show an avatar
-            isVideo: data.isVideo || 'false'       // Optional - for video call indication
+            isVideo: data.isVideo || 'true'       // Optional - for video call indication
         },
         android: {
             priority: 'high',  // Ensure high priority to wake the device
