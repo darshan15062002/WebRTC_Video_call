@@ -65,7 +65,7 @@ io.on('connection', (socket) => {
 
 
         const { room_id, email_id, self } = data;
-        console.log("userjoin", email_id, room_id);
+        console.log("userjoin", email_id, room_id, self);
 
 
         const user = await User.findOne({ code: room_id });
@@ -95,11 +95,16 @@ io.on('connection', (socket) => {
         const socketId = emailToSocketMapping.get(email_id)
         socket.to(socketId).emit("call_accepted", { ans })
     })
-
     socket.on("end-call", ({ email_id }) => {
         console.log("call end");
 
-    })
+
+        const socketId = emailToSocketMapping.get(email_id);
+        if (socketId) {
+
+            socket.to(socketId).emit("call_ended", { message: "Call has ended." });
+        }
+    });
 
     // **Add ICE Candidate Exchange Handling Here**
     socket.on('ice_candidate', ({ email_id, candidate }) => {
