@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     socket.on("join_room", async (data) => {
 
 
-        const { room_id, email_id } = data;
+        const { room_id, email_id, self } = data;
         console.log("userjoin", email_id, room_id);
 
 
@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
         if (!user) return
         console.log("founded User", user);
 
-        user.pushToken && sendNotification(user.pushToken, { callId: "hello", callerName: user?.name })
+        user.pushToken && !self && sendNotification(user.pushToken, { callId: "hello", callerName: user?.name })
 
         socket.join(room_id)
         emailToSocketMapping.set(email_id, socket.id)
@@ -94,6 +94,11 @@ io.on('connection', (socket) => {
         console.log("on server call Accepted recived send to", email_id);
         const socketId = emailToSocketMapping.get(email_id)
         socket.to(socketId).emit("call_accepted", { ans })
+    })
+
+    socket.on("end-call", ({ email_id }) => {
+        console.log("call end");
+
     })
 
     // **Add ICE Candidate Exchange Handling Here**

@@ -9,20 +9,20 @@ const sendNotification = (deviceToken, data,) => {
             type: 'call',
             callId: data.callId,
             callerName: data.callerName,
-            callerAvatar: data.callerAvatar || '',  // Optional - if you want to show an avatar
-            isVideo: data.isVideo || 'true'       // Optional - for video call indication
+            callerAvatar: data.callerAvatar || '',
+            isVideo: data.isVideo || 'true'
         },
         android: {
-            priority: 'high',  // Ensure high priority to wake the device
-            ttl: 0,            // Time to live - Immediate delivery
+            priority: 'high',
+            ttl: 0,
         },
         apns: {
             headers: {
-                'apns-priority': '10'  // High priority for iOS
+                'apns-priority': '10'
             },
             payload: {
                 aps: {
-                    contentAvailable: true,  // Required for background data delivery on iOS
+                    contentAvailable: true,
                 },
             },
         },
