@@ -97,14 +97,14 @@ io.on('connection', (socket) => {
     })
 
 
-    socket.on("end-call", ({ email_id }) => {
-        console.log("call end", email_id);
+    socket.on("end-call", ({ room_id }) => {
+        console.log("call end", room_id);
 
 
-        const socketId = emailToSocketMapping.get(email_id);
-        if (socketId) {
-            console.log("call_ended end", socketId);
-            socket.to(socketId).emit("call_ended", { message: "Call has ended." });
+
+        if (room_id) {
+            console.log("call_ended end", room_id);
+            socket.broadcast.to(room_id).emit("call_ended", { message: "Call has ended." });
         }
     });
 
