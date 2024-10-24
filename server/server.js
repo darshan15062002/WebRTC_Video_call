@@ -95,13 +95,15 @@ io.on('connection', (socket) => {
         const socketId = emailToSocketMapping.get(email_id)
         socket.to(socketId).emit("call_accepted", { ans })
     })
+
+
     socket.on("end-call", ({ email_id }) => {
-        console.log("call end");
+        console.log("call end", email_id);
 
 
         const socketId = emailToSocketMapping.get(email_id);
         if (socketId) {
-
+            console.log("call_ended end", socketId);
             socket.to(socketId).emit("call_ended", { message: "Call has ended." });
         }
     });
