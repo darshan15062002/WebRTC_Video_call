@@ -57,6 +57,8 @@ const onlineUsers = new Map();
 
 
 io.on('connection', (socket) => {
+    console.log("socketConnected");
+
     // socket.on('set-status',(data)=>{
 
     // })
@@ -134,8 +136,26 @@ const sendNotification = require('./utils/sendNotification.js');
 
 app.use("/api/v1/", authRoute)
 
+
+
 app.get("/", (req, res) => {
     res.send("hello ")
+})
+
+app.post("/send-notification", async (req, res) => {
+    const { room_id } = req.body
+    console.log("send-notification", room_id);
+    try {
+        const user = await User.findOne({ code: room_id });
+        if (!user) return
+        console.log("founded User", user);
+
+        user.pushToken && sendNotification(user.pushToken, { callId: "hello", callerName: user?.name })
+        res.status(200).json({ success: true, })
+    } catch (error) {
+        console.log("error in sending notification", error);
+        res.status(500).json({ success: false, error })
+    }
 })
 
 
