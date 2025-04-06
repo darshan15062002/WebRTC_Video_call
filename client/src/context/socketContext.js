@@ -15,7 +15,7 @@ export const useSocket = () => {
 // https://ice-server-socket.onrender.com
 
 const SocketProvider = ({ children }) => {
-    const socket = useMemo(() => io("https://ice-server-socket.onrender.com"), [])
+    const socket = useMemo(() => io("https://webrtc-video-call-ti87.onrender.com"), [])
     // const socket = useMemo(() => io("http://localhost:8000"), [])
     return (
         <socketContext.Provider value={{ socket }}>
