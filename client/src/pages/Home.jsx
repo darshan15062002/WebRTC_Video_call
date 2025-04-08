@@ -36,12 +36,12 @@ function Home() {
 
             <form className='form_container'>
 
-                <label>Name</label>
+                <label className='' style={{ backgroundColor: "white" }}>Name</label>
                 <input
                     type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <label>Code</label>
+                <label style={{ backgroundColor: "white" }}>Code</label>
                 <input type="text" name="" id="" value={code} onChange={(e) => setCode(e.target.value)} />
-                <button type="button" onClick={handleClick}>Join</button>
+                <button type="button" style={{ color: "white" }} onClick={handleClick}>Join</button>
             </form>
         </div>
     )

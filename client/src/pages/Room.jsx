@@ -57,6 +57,10 @@ function Room() {
 
     }, [])
 
+    useEffect(() => {
+        myStream && sendStream(myStream)
+    }, [myStream])
+
     const handleNegotiation = useCallback(async () => {
         try {
             const localOffer = await createOffer()
@@ -85,24 +89,82 @@ function Room() {
     }, [peer, handleNegotiation])
 
     return (
-        <div className='container' >
-            <h1>You are connected to {remoteEmailId}</h1>
-            <div className="new">
-                <div className="video_container" style={{ position: 'relative' }}>
-                    <ReactPlayer className="myStream" height={"100%"} width={"100%"} url={myStream} playing={true} volume={0} />
-                    <button style={{ border: '1px solid black', background: 'white', position: 'absolute', bottom: "30px", padding: "5px", right: '30px' }} onClick={() => {
-                        sendStream(myStream)
-                        alert("Done")
-                    }}>Send</button>
+        <div style={{
+            position: 'relative',
+            height: '100vh',
+            width: '100vw',
+            backgroundColor: '#000',
+            overflow: 'hidden',
+        }}>
+
+            {/* Remote Video Full Screen */}
+            {remoteStream ? (
+                <ReactPlayer
+                    url={remoteStream}
+                    playing
+                    controls={false}
+                    muted={false}
+                    width="100%"
+                    height="100%"
+                    style={{
+                        objectFit: 'cover',
+                        backgroundColor: '#111',
+                    }}
+                />
+            ) : (
+                <div style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'gray',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '20px',
+                }}>
+                    Waiting for remote stream...
                 </div>
+            )}
 
-                {console.log("here is remoteStream", remoteStream)}
 
-                {remoteStream ? <div className="video_container" style={{ position: 'relative' }}> <ReactPlayer height={"100%"} width={"100%"} className='remoteStream' url={remoteStream} playing={true} /></div> : <div
-                    style={{ height: "100%", width: '50%', background: 'gray', borderRadius: "20px" }}></div>}
-
+            <div style={{
+                position: 'absolute',
+                bottom: 20,
+                right: 20,
+                width: '200px',
+                height: '150px',
+                border: '2px solid white',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                backgroundColor: '#000',
+                zIndex: 10,
+            }}>
+                <ReactPlayer
+                    url={myStream}
+                    playing
+                    muted
+                    controls={false}
+                    width="100%"
+                    height="100%"
+                />
             </div>
-        </div >
+
+
+            <div style={{
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                color: '#fff',
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                zIndex: 10,
+            }}>
+                You are connected to {remoteEmailId}
+            </div>
+
+        </div>
     )
 }
 

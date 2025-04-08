@@ -1,10 +1,10 @@
-*{
-    margin: 0;
-    padding: 0;
+* {
+  margin: 0;
+  padding: 0;
 }
 
 
-.home_container{
+.home_container {
   background: #000000;
   height: 100vh;
   display: flex;
@@ -13,34 +13,35 @@
   align-items: center;
 
 }
-.home_container form{
+
+.home_container form {
   box-shadow: rgba(89, 74, 92, 0.516) 1px 0px 0px 20px, rgba(80, 62, 109, 0.15) 0px 0px 0px 1px;
 
-background: white;
+  background: white;
   border-radius: 20px;
-padding: 20px;
-padding-left: 40px;
-padding-right: 40px;
+  padding: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
   width: 300px;
-height: 200px;
-display: flex;
-justify-content: center;
-flex-direction: column;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 
-gap: 5px;
+  gap: 5px;
 }
 
-.home_container form input{
+.home_container form input {
   padding-left: 5px;
   padding-right: 5px;
   padding-top: 10px;
   padding-bottom: 10px;
   background: rgb(206, 205, 205);
   outline: none;
-  border:none
-
+  border: none
 }
-.home_container form label{
+
+.home_container form label {
   font-size: 18px;
   font-weight: 400;
   color: #444343;
@@ -48,73 +49,77 @@ gap: 5px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-.home_container form button{
+.home_container form button {
   padding: 5px;
-font-weight: 400;
+  font-weight: 400;
   font-size: 16px;
 }
 
 
-*{
+* {
   background: #000;
   margin: 0;
   padding: 0;
 }
+
 .container {
- 
-   
-    color: white;
- 
-    display: flex;
- 
-   text-align: center;
-    flex-direction: column;
-   
+
+
+  color: white;
+
+  display: flex;
+
+  text-align: center;
+  flex-direction: column;
+
+
+}
+
+.new {
+
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.video_container {
+  width: 80%;
+  height: 80%;
+}
+
+@media only screen and (max-width: 768px) {
+  .new .video_container {
+    width: 100%;
 
   }
+}
 
-  .new{
-    padding: 20px;
-  gap: 40px;
-  height: 100%;
+.new .remoteStream {
+  width: 50%;
+}
+
+.new .remoteStream video {
+
+  border-radius: 25px;
+
+}
+
+.new .myStream video {
+  border-radius: 25px;
+}
+
+@media only screen and (max-width: 600px) {
+  .new {
+    padding: 5px;
+    gap: 5px;
+    height: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
   }
 
-
-  .video_container{
-    width: 50%;
-  }
-  @media only screen and (max-width: 768px) {
-    .new  .video_container{
-      width: 100%;
-   
-    }
-  }
-
-  .new .remoteStream{
-    width: 50%;
-  }
-  .new .remoteStream video{
- 
-    border-radius: 25px;
-  
-  }
-  
-  .new .myStream video{
-    border-radius: 25px;
-  }
-  
-  @media only screen and (max-width: 600px) {
-    .new{
-      padding: 5px;
-    gap: 5px;
-    height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-  
-  }
+}
