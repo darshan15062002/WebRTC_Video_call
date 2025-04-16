@@ -2,23 +2,43 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSocket } from '../context/socketContext'
 import { usePeer } from '../context/webRtcContext'
 import ReactPlayer from 'react-player'
+import { MdCallEnd } from "react-icons/md";
+import { IoMdMic, IoMdMicOff } from "react-icons/io";
+import {
+    Mic,
+    MicOff,
+    Video,
+    VideoOff,
+    ScreenShare,
+    Phone,
+    PhoneOff,
+    MessageSquare,
+    Users,
+    MoreVertical,
+    Volume,
+    VolumeX
+} from "lucide-react";
+import WaitingScreen from '../componets/WaitingScreen';
+import CallControlButton from '../componets/CallControlButton';
+import { useNavigate } from 'react-router-dom';
 
 function Room() {
     const { socket } = useSocket()
 
     const [myStream, setMyStream] = useState(null)
     const [remoteEmailId, setRemoteEmailId] = useState()
-    const { peer, createOffer, createAns, setRemoteAns, sendStream, remoteStream } = usePeer()
-
+    const { peer, createOffer, createAns, setRemoteAns, replaceVideoTrack, sendStream, remoteStream } = usePeer()
+    const [isMuted, setIsMuted] = useState(false);
+    const [isVideoOff, setIsVideoOff] = useState(false);
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
+    const [isRemoteAudioMuted, setIsRemoteAudioMuted] = useState(false);
     const handleNewUserJoin = useCallback(async ({ email_id }) => {
-
-
         const offer = await createOffer()
 
         socket.emit("call_user", { email_id, offer })
         setRemoteEmailId(email_id)
     }, [createOffer, socket])
-
+    const navigate = useNavigate()
     const handleIncommingCall = useCallback(async (data) => {
         const { fromEmail, offer } = data
         const ans = await createAns(offer)
@@ -58,8 +78,8 @@ function Room() {
     }, [])
 
     useEffect(() => {
-        myStream && sendStream(myStream)
-    }, [myStream])
+        myStream && !isScreenSharing && sendStream(myStream)
+    }, [myStream, isScreenSharing, sendStream])
 
     const handleNegotiation = useCallback(async () => {
         try {
@@ -76,8 +96,8 @@ function Room() {
 
 
     useEffect(() => {
-        getUserMediaStrem()
-    }, [getUserMediaStrem])
+        !isScreenSharing && getUserMediaStrem()
+    }, [getUserMediaStrem, isScreenSharing])
 
     useEffect(() => {
         peer.addEventListener("negotiationneeded", handleNegotiation)
@@ -88,83 +108,175 @@ function Room() {
         }
     }, [peer, handleNegotiation])
 
+
+    const handleToggleMute = () => {
+        setIsMuted(!isMuted)
+        myStream.getAudioTracks()[0].enabled = !isMuted
+
+    }
+    const handleToggleVideo = () => {
+        setIsVideoOff((prev) => !prev)
+        myStream.getVideoTracks()[0].enabled = !myStream.getVideoTracks()[0].enabled
+    }
+
+    const handleToggleRemoteAudio = () => {
+        setIsRemoteAudioMuted(!isRemoteAudioMuted)
+        remoteStream.getAudioTracks()[0].enabled = !remoteStream.getAudioTracks()[0].enabled
+    }
+
+    const handleToggleScreenShare = async () => {
+        if (!isScreenSharing) {
+            try {
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const screenTrack = screenStream.getVideoTracks()[0];
+
+                replaceVideoTrack(screenTrack);
+                setMyStream(screenStream);
+                setIsScreenSharing(true);
+
+                screenTrack.onended = async () => {
+                    const camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    const camTrack = camStream.getVideoTracks()[0];
+
+                    replaceVideoTrack(camTrack);
+                    setMyStream(camStream);
+                    setIsScreenSharing(false);
+                };
+            } catch (err) {
+                console.error("Screen share failed", err);
+            }
+        } else {
+            const camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            const camTrack = camStream.getVideoTracks()[0];
+
+            replaceVideoTrack(camTrack);
+            setMyStream(camStream);
+            setIsScreenSharing(false);
+        }
+    };
+
+    const handleEndCall = () => {
+        socket.emit("call_ended", { email_id: remoteEmailId })
+        myStream.getTracks().forEach(track => track.stop())
+        peer.close()
+        setMyStream(null)
+        setRemoteEmailId(null)
+        navigate("/home")
+    }
+
     return (
-        <div style={{
-            position: 'relative',
-            height: '100vh',
-            width: '100vw',
-            backgroundColor: '#000',
-            overflow: 'hidden',
-        }}>
+        <div className="video-call-container">
 
             {/* Remote Video Full Screen */}
             {remoteStream ? (
                 <ReactPlayer
                     url={remoteStream}
                     playing
+                    inverted={true}
                     controls={false}
-                    muted={false}
+                    muted={isRemoteAudioMuted}
                     width="100%"
-                    height="100%"
-                    style={{
-                        objectFit: 'cover',
-                        backgroundColor: '#111',
-                    }}
+                    height="80vh"
+                    className="remote-video"
                 />
             ) : (
-                <div style={{
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'gray',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '20px',
-                }}>
-                    Waiting for remote stream...
-                </div>
+
+                <WaitingScreen />
+
             )}
 
 
-            <div style={{
-                position: 'absolute',
-                bottom: 20,
-                right: 20,
-                width: '200px',
-                height: '150px',
-                border: '2px solid white',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                backgroundColor: '#000',
-                zIndex: 10,
-            }}>
-                <ReactPlayer
-                    url={myStream}
-                    playing
-                    muted
-                    controls={false}
-                    width="100%"
-                    height="100%"
-                />
+            <div className="call-controls-bar">
+                <div className="call-controls-container">
+                    <CallControlButton
+                        onClick={handleToggleMute}
+                        Icon={isMuted ? MicOff : Mic}
+                        active={!isMuted}
+                        className="control-button"
+                    />
+
+                    <CallControlButton
+                        onClick={handleToggleVideo}
+                        Icon={isVideoOff ? VideoOff : Video}
+                        active={!isVideoOff}
+                        className="control-button"
+                    />
+
+                    <CallControlButton
+                        onClick={handleToggleScreenShare}
+                        Icon={ScreenShare}
+                        active={isScreenSharing}
+                        className="control-button"
+                    />
+
+                    <CallControlButton
+                        onClick={handleToggleRemoteAudio}
+                        Icon={isRemoteAudioMuted ? VolumeX : Volume}
+                        active={!isRemoteAudioMuted}
+                        className="control-button"
+                    />
+
+                    {/* End Call Button - Always Red */}
+                    <CallControlButton
+                        onClick={handleEndCall}
+                        Icon={PhoneOff}
+                        className="end-call-button"
+                    />
+
+                    <CallControlButton
+                        // onClick={handleChat}
+                        Icon={MessageSquare}
+                        className="control-button"
+                    />
+
+                    <CallControlButton
+                        // onClick={handleParticipants}
+                        Icon={Users}
+                        className="control-button participants-button"
+                    />
+
+                    <CallControlButton
+                        // onClick={handleMore}
+                        Icon={MoreVertical}
+                        className="control-button"
+                    />
+                </div>
             </div>
 
 
-            <div style={{
-                position: 'absolute',
-                top: 10,
-                left: 10,
-                color: '#fff',
-                backgroundColor: 'rgba(0,0,0,0.4)',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontWeight: 'bold',
-                zIndex: 10,
-            }}>
-                You are connected to {remoteEmailId}
+            <div className="self-view-container">
+                {myStream && !isVideoOff ? (
+                    <ReactPlayer
+                        url={myStream}
+                        playing
+                        muted
+                        controls={false}
+                        width="100%"
+                        height="100%"
+                        className="self-video"
+                    />
+                ) : (
+                    <div className="self-view-placeholder">
+                        <div className="self-avatar">
+                            <span>YOU</span>
+                        </div>
+                    </div>
+                )}
+                <div className="self-view-status">
+                    {isVideoOff ? "Camera Off" : "You"}
+                    {isMuted && <MicOff className="status-icon" size={12} />}
+                </div>
             </div>
+
+
+            <div className="call-info-banner">
+                <div className="connection-indicator"></div>
+                <span>Connected with <strong>{remoteEmailId}</strong></span>
+            </div>
+
 
         </div>
+
     )
 }
 

@@ -41,7 +41,7 @@ function Home() {
                     type="email" name="" id="" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <label style={{ backgroundColor: "white" }}>Code</label>
                 <input type="text" name="" id="" value={code} onChange={(e) => setCode(e.target.value)} />
-                <button type="button" style={{ color: "white" }} onClick={handleClick}>Join</button>
+                <button type="button" style={{ color: "white", backgroundColor: 'black' }} onClick={handleClick}>Join</button>
             </form>
         </div>
     )
