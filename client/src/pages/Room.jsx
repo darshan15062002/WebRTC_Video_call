@@ -66,20 +66,30 @@ function Room() {
         }
     }, [handleNewUserJoin, handleIncommingCall, handleCallAccepted, socket])
 
-
     const getUserMediaStrem = useCallback(async () => {
-        await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(
-            stream => setMyStream(stream),
-            err => console.log(err)
-
-        );
-
-
-    }, [])
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true
+            });
+            setMyStream(stream);
+        } catch (err) {
+            console.error("Error accessing media devices:", err);
+            // Show user-friendly error message
+            alert("Could not access camera or microphone. Please check permissions.");
+        }
+    }, []);
 
     useEffect(() => {
-        myStream && !isScreenSharing && sendStream(myStream)
-    }, [myStream, isScreenSharing, sendStream])
+        if (!isScreenSharing) {
+            getUserMediaStrem();
+        }
+    }, [getUserMediaStrem, isScreenSharing]);
+    useEffect(() => {
+        if (myStream && !isScreenSharing) {
+            sendStream(myStream);
+        }
+    }, [myStream, isScreenSharing, sendStream]);
 
     const handleNegotiation = useCallback(async () => {
         try {
@@ -110,48 +120,88 @@ function Room() {
 
 
     const handleToggleMute = () => {
-        setIsMuted(!isMuted)
-        myStream.getAudioTracks()[0].enabled = !isMuted
+        if (!myStream) return;
 
-    }
+        const audioTrack = myStream.getAudioTracks()[0];
+        if (audioTrack) {
+            const newMuteState = !isMuted;
+            setIsMuted(newMuteState);
+            audioTrack.enabled = !newMuteState;
+        }
+    };
     const handleToggleVideo = () => {
-        setIsVideoOff((prev) => !prev)
-        myStream.getVideoTracks()[0].enabled = !myStream.getVideoTracks()[0].enabled
-    }
+        if (!myStream) return;
+
+        const videoTrack = myStream.getVideoTracks()[0];
+        if (videoTrack) {
+            const newVideoState = !isVideoOff;
+            setIsVideoOff(newVideoState);
+            videoTrack.enabled = !newVideoState;
+        }
+    };
+
 
     const handleToggleRemoteAudio = () => {
-        setIsRemoteAudioMuted(!isRemoteAudioMuted)
-        remoteStream.getAudioTracks()[0].enabled = !remoteStream.getAudioTracks()[0].enabled
-    }
+        if (!remoteStream) return;
+
+        const audioTrack = remoteStream.getAudioTracks()[0];
+        if (audioTrack) {
+            const newMuteState = !isRemoteAudioMuted;
+            setIsRemoteAudioMuted(newMuteState);
+            audioTrack.enabled = !newMuteState;
+        }
+    };
 
     const handleToggleScreenShare = async () => {
-        if (!isScreenSharing) {
-            try {
-                const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        try {
+            if (!isScreenSharing) {
+                // Start screen sharing
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true
+                });
                 const screenTrack = screenStream.getVideoTracks()[0];
 
-                replaceVideoTrack(screenTrack);
-                setMyStream(screenStream);
-                setIsScreenSharing(true);
+                if (screenTrack) {
+                    // Add audio from current stream if exists
+                    if (myStream && myStream.getAudioTracks().length > 0) {
+                        screenStream.addTrack(myStream.getAudioTracks()[0]);
+                    }
 
-                screenTrack.onended = async () => {
-                    const camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                    const camTrack = camStream.getVideoTracks()[0];
+                    replaceVideoTrack(screenTrack);
+                    setMyStream(screenStream);
+                    setIsScreenSharing(true);
 
-                    replaceVideoTrack(camTrack);
-                    setMyStream(camStream);
-                    setIsScreenSharing(false);
-                };
-            } catch (err) {
-                console.error("Screen share failed", err);
+                    // Handle when user stops screen sharing via browser UI
+                    screenTrack.onended = async () => {
+                        await returnToCamera();
+                    };
+                }
+            } else {
+                // Stop screen sharing
+                await returnToCamera();
             }
-        } else {
-            const camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        } catch (err) {
+            console.error("Screen share failed:", err);
+            alert("Failed to share screen. Please try again.");
+        }
+    };
+
+    // Helper function to return to camera after screen sharing
+    const returnToCamera = async () => {
+        try {
+            const camStream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
             const camTrack = camStream.getVideoTracks()[0];
 
-            replaceVideoTrack(camTrack);
-            setMyStream(camStream);
-            setIsScreenSharing(false);
+            if (camTrack) {
+                replaceVideoTrack(camTrack);
+                setMyStream(camStream);
+                setIsScreenSharing(false);
+            }
+        } catch (error) {
+            console.error("Error returning to camera:", error);
         }
     };
 
@@ -161,7 +211,7 @@ function Room() {
         peer.close()
         setMyStream(null)
         setRemoteEmailId(null)
-        navigate("/home")
+        navigate("/")
     }
 
     return (
@@ -174,7 +224,6 @@ function Room() {
                     playing
                     inverted={true}
                     controls={false}
-                    muted={isRemoteAudioMuted}
                     width="100%"
                     height="80vh"
                     className="remote-video"

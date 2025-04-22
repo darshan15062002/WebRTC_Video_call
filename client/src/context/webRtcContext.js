@@ -46,6 +46,9 @@ export const WebRtcProvider = ({ children }) => {
         try {
             console.log(stream.getTracks(), "my Stream");
             const tracks = stream.getTracks();
+            console.log(stream.getAudioTracks()); // should show a track
+            stream.getTracks().forEach(track => console.log(track.kind)) // should show 'audio'
+
             for (const track of tracks) {
                 const sender = peer.addTrack(track, stream);
                 if (track.kind === "video") {
