@@ -11,7 +11,7 @@ export const WebRtcProvider = ({ children }) => {
         {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'relay1.expressturn.com:3480', username: '000000002069862758', credential: 'GBEdGy0Ha0BrIih3gt1GcwZiegk=' }
+                { urls: 'turn:relay1.expressturn.com:3480', username: '000000002069862758', credential: 'GBEdGy0Ha0BrIih3gt1GcwZiegk=' }
             ]
         }
     ), []);
