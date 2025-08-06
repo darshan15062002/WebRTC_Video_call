@@ -155,14 +155,14 @@ function Room() {
     const handleToggleScreenShare = async () => {
         try {
             if (!isScreenSharing) {
-                // Start screen sharing
+
                 const screenStream = await navigator.mediaDevices.getDisplayMedia({
                     video: true
                 });
                 const screenTrack = screenStream.getVideoTracks()[0];
 
                 if (screenTrack) {
-                    // Add audio from current stream if exists
+
                     if (myStream && myStream.getAudioTracks().length > 0) {
                         screenStream.addTrack(myStream.getAudioTracks()[0]);
                     }
@@ -171,13 +171,12 @@ function Room() {
                     setMyStream(screenStream);
                     setIsScreenSharing(true);
 
-                    // Handle when user stops screen sharing via browser UI
+
                     screenTrack.onended = async () => {
                         await returnToCamera();
                     };
                 }
             } else {
-                // Stop screen sharing
                 await returnToCamera();
             }
         } catch (err) {
@@ -222,7 +221,7 @@ function Room() {
                 <ReactPlayer
                     url={remoteStream}
                     playing
-                    inverted={true}
+                    inverted={isScreenSharing ? false : true}
                     controls={false}
                     width="100%"
                     height="80vh"

@@ -7,7 +7,14 @@ export const WebRtcProvider = ({ children }) => {
     const [remoteStream, setRemoteStream] = useState(null);
     const videoSenderRef = useRef(null); // 👈 track video sender
 
-    const peer = useMemo(() => new RTCPeerConnection(), []);
+    const peer = useMemo(() => new RTCPeerConnection(
+        {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'relay1.expressturn.com:3480', username: '000000002069862758', credential: 'GBEdGy0Ha0BrIih3gt1GcwZiegk=' }
+            ]
+        }
+    ), []);
 
     const createOffer = async () => {
         try {
